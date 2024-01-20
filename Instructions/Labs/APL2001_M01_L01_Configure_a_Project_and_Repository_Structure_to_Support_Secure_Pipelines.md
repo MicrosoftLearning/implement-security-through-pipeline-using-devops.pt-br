@@ -1,10 +1,10 @@
 ---
 lab:
-  title: Configurar uma estrutura repositório e projeto para dar suporte a pipelines seguros
+  title: Configurar uma estrutura de repositório e projeto para dar suporte a pipelines seguros
   module: 'Module 1: Configure a project and repository structure to support secure pipelines'
 ---
 
-# Configurar uma estrutura repositório e projeto para dar suporte a pipelines seguros
+# Configurar uma estrutura de repositório e projeto para dar suporte a pipelines seguros
 
 Neste laboratório, você vai aprender a configurar uma estrutura de repositório e projeto no Azure DevOps para dar suporte a pipelines seguros. Este laboratório aborda as práticas recomendadas para organizar projetos e repositórios, atribuir permissões e gerenciar arquivos seguros.
 
@@ -29,18 +29,19 @@ Neste exercício, você configurará uma estrutura de projeto segura criando um 
 1. Abra as **configurações da organização** no canto inferior esquerdo do portal e, em seguida, **Projetos** na seção Geral.
 
 1. Selecione a opção **Novo projeto** e use as seguintes configurações:
+
    - nome: **eShopSecurity**
    - visibilidade: **Particular**
    - Avançado: Controle de Versão: **Git**
    - Avançado: Processo de Item de Trabalho: **Scrum**
 
-    ![Captura de tela da caixa de diálogo do novo projeto com as configurações especificadas.](media/new-team-project.png)
+   ![Captura de tela da caixa de diálogo do novo projeto com as configurações especificadas.](media/new-team-project.png)
 
 1. Selecione **Criar** para criar o projeto.
 
 1. Agora é possível alternar entre os diferentes projetos clicando no ícone do Azure DevOps no canto superior esquerdo do portal do Azure DevOps.
 
-    ![Captura de tela dos projetos eShopOnWeb e eShopSecurity da equipe do Azure DevOps.](media/azure-devops-projects.png)
+   ![Captura de tela dos projetos eShopOnWeb e eShopSecurity da equipe do Azure DevOps.](media/azure-devops-projects.png)
 
 É possível gerenciar permissões e configurações para cada projeto separadamente acessando o menu Configurações do projeto e selecionando o projeto de equipe apropriado. Se você tiver vários usuários ou equipes trabalhando em projetos diferentes, também poderá atribuir permissões a cada projeto separadamente.
 
@@ -62,12 +63,10 @@ Neste exercício, você configurará uma estrutura de projeto segura criando um 
 
 1. Selecione seu usuário em Usuários e selecione o botão **Permitir** para permitir todas as permissões.
 
-    ![Captura de tela das configurações de segurança do repositório com permitir para leitura e negar para todas as outras permissões.](media/repository-security.png)
+   > [!NOTE]
+   > Se você não vir seu nome na seção **Usuários**, insira seu nome na caixa de texto **Pesquisar por usuários ou grupos** e selecione-o na lista de resultados.
 
-1. (Opcional) Adicione um grupo específico de usuários ou usuário que você deseja conceder acesso ao repositório e execute pipelines a partir do projeto eShopOnWeb. Clique na caixa de pesquisa, digite o nome do grupo, selecione-o e defina as permissões que deseja permitir ou negar para o grupo ou usuário.
-
-    > [!NOTE]
-    > Certifique-se de ter o mesmo grupo em seu projeto eShopOnWeb. Isso permitirá que você execute pipelines do projeto eShopOnWeb e acesse o repositório no projeto eShopSecurity.
+   ![Captura de tela das configurações de segurança do repositório com permitir para leitura e negar para todas as outras permissões.](media/repository-security.png)
 
 1. As alterações vão ser salvas automaticamente.
 
@@ -75,7 +74,7 @@ Agora, apenas o usuário que você atribuiu permissões e os administradores pod
 
 ### Exercício 2: configurar uma estrutura de pipeline e modelo para oferecer suporte a pipelines seguros
 
-#### Tarefa 1: (se concluído, ignorar) importar e executar o pipeline de CI
+#### Tarefa 1: importar e executar o pipeline de CI
 
 1. Navegue até o portal do Azure DevOps em `https://dev.azure.com` e abra sua organização.
 
@@ -95,74 +94,14 @@ Agora, apenas o usuário que você atribuiu permissões e os administradores pod
 
 1. Clique no botão **Executar** para executar o pipeline.
 
-1. Seu pipeline assumirá um nome com base no nome do projeto. Renomeie-o para identificar melhor o pipeline.
+   > [!NOTE]
+   > Seu pipeline assumirá um nome com base no nome do projeto. Você o renomeará para facilitar a identificação do pipeline.
 
 1. Vá para **Pipelines > Pipelines** e selecione o pipeline criado recentemente. Selecione as reticências e, em seguida, selecione a opção **Renomear/mover**.
 
 1. Nomeie-o **eshoponweb-ci** e selecione **Salvar**.
 
-#### Tarefa 2: criar uma entidade de serviço e uma conexão de serviço para acessar os recursos do Azure
-
-Nesta tarefa, você criará uma entidade de serviço usando a CLI do Azure e a Conexão de Serviço no Azure DevOps, o que permitirá implantar recursos em sua assinatura do Azure.
-
-1. Abra o navegador da Web, navegue até o portal do Azure em `https://portal.azure.com` e entre com a conta de usuário que tenha a função de Proprietário na assinatura do Azure que você usará neste laboratório e a função de Administrador Global no locatário do Azure AD associada a essa assinatura.
-
-1. No portal do Azure, selecione o ícone **Cloud Shell** na parte superior da página à direita da caixa de pesquisa.
-
-1. Se for solicitado que você selecione **Bash** ou **PowerShell**, selecione **Bash**.
-
-   > [!NOTE]
-   > Se esta for a primeira vez que você estiver iniciando o **Cloud Shell** e receber a mensagem **Você não tem nenhum armazenamento montado**, selecione a assinatura que você está usando no laboratório e selecione **Criar armazenamento**.
-
-1. No prompt **Bash**, no painel **Cloud Shell**, execute os seguintes comandos para recuperar os valores da ID de assinatura do Azure e dos atributos de nome de assinatura:
-
-    ```bash
-    az account show --query id --output tsv
-    az account show --query name --output tsv
-    ```
-
-    > [!NOTE]
-    > Copie ambos os valores para um arquivo de texto. Você precisará deles mais adiante neste laboratório.
-
-1. No prompt **Bash**, no painel **Cloud Shell**, execute o seguinte comando para criar uma entidade de serviço:
-
-    ```bash
-    az ad sp create-for-rbac --name myServicePrincipalName \
-                         --role contributor \
-                         --scopes /subscriptions/mySubscriptionID
-    ```
-
-    > [!NOTE]
-    > Substitua **myServicePrincipalName** por qualquer cadeia de caracteres exclusiva que consista em letras e dígitos, por exemplo, **AzureDevOpsSP** e **mySubscriptionID** por sua subscriptionId do Azure.
-
-    > [!NOTE]
-    > O comando gerará uma saída JSON. Copie a saída no arquivo de texto. Você precisará disso em uma etapa posterior deste laboratório.
-
-1. Em seguida, navegue até o portal do Azure DevOps em `https://dev.azure.com` e abra sua organização.
-
-1. Abra o projeto **eShopOnWeb** e selecione **Configurações do projeto** no canto inferior esquerdo do portal.
-
-1. Em Pipelines, selecione **Conexões de serviço** e, em seguida, selecione o botão **Criar conexão de serviço**.
-
-    ![Captura de tela do botão de criação da nova conexão de serviço.](media/new-service-connection.png)
-
-1. Na folha **Nova conexão de serviço**, escolha **Azure Resource Manager** e **Avançar** (talvez seja necessário rolar para baixo).
-
-1. Depois selecione **Entidade de serviço (manual)** e **Avançar**.
-
-1. Preencha os campos vazios usando as informações coletadas durante as etapas anteriores:
-    - ID e nome da assinatura.
-    - ID da entidade de serviço (ou clientId/AppId), chave da entidade de serviço (ou senha) e TenantId.
-    - Em **Nome da conexão de serviço**, digite **azure subs**. Esse nome será referenciado em pipelines YAML quando precisar de uma Conexão de Serviço do Azure DevOps para se comunicar com sua assinatura do Azure.
-
-        ![Captura de tela da configuração da conexão de serviço do Azure.](media/azure-service-connection.png)
-
-1. Não marque **Conceder permissão de acesso a todos os pipelines**. Selecione **Verificar e salvar**.
-
-    > [!NOTE]
-    > A opção **Conceder permissão de acesso a todos os pipelines** não é recomendada para ambientes de produção. Ela só é usada neste laboratório para simplificar a configuração do pipeline.
-
-#### Tarefa 3: (se concluída, pular) importar e executar o pipeline de CD
+#### Tarefa 2: importar e executar o pipeline de CD
 
 1. Acesse **Pipelines > Pipelines**.
 
@@ -177,25 +116,25 @@ Nesta tarefa, você criará uma entidade de serviço usando a CLI do Azure e a C
 1. Selecione o arquivo **/.ado/eshoponweb-cd-webapp-code.yml** e selecione **Continuar**.
 
 1. Na definição de pipeline YAML na seção variáveis, personalize:
+
    - **AZ400-EWebShop-NAME** com o nome de sua preferência, por exemplo, **rg-eshoponweb-secure**.
    - **Local** com o nome da região do Azure que você deseja implantar seus recursos, por exemplo, **southcentralus**.
    - **YOUR-SUBSCRIPTION-ID** com sua ID de assinatura do Azure.
-   - **az400eshop-NAME**, com um nome de aplicativo Web a ser implantado com um nome exclusivo global, por exemplo, **eshoponweb-lab-secure**.
+   - **az400-webapp-NAME** por um nome globalmente exclusivo do aplicativo Web a ser implantado, por exemplo, a cadeia de caracteres **eshoponweb-lab-secure-** seguida por um número aleatório de seis dígitos. 
 
-1. Selecione **Salvar e executar** para confirmar diretamente na ramificação principal ou crie uma ramificação para essa confirmação.
+1. Selecione **Salvar e executar** e escolha fazer commit diretamente na ramificação principal.
 
 1. Selecione **Salvar e executar** novamente.
 
-    > [!NOTE]
-    > Se você optar por criar uma nova ramificação, será necessário criar uma solicitação de pull para mesclar as alterações na ramificação principal.
+1. Abra a execução de pipeline. Se você vir a mensagem "Este pipeline precisa de permissão para acessar um recurso antes que essa execução possa continuar a Implantar no WebApp", selecione **Exibir**, **Permitir** e **Permitir** novamente. Isso é necessário para permitir que o pipeline crie o recurso do Serviço de Aplicativo do Azure.
 
-1. Abra o pipeline. Se você vir a mensagem "Este pipeline precisa de permissão para acessar um recurso antes que essa execução possa continuar a Implantar no WebApp", selecione **Exibir**, **Permitir** e **Permitir** novamente. Isso é necessário para permitir que o pipeline crie o recurso do Serviço de Aplicativo do Azure.
+   ![Captura de tela do acesso de permissão do pipeline YAML.](media/pipeline-deploy-permit-resource.png)
 
-    ![Captura de tela do acesso de permissão do pipeline YAML.](media/pipeline-deploy-permit-resource.png)
+1. A implantação pode levar alguns minutos para ser concluída, aguarde a execução do pipeline. O pipeline é disparado após a conclusão do pipeline de CI e inclui as seguintes tarefas:
 
-1. A implantação pode levar alguns minutos para ser concluída, aguarde a execução do pipeline. A definição de CD consiste nas seguintes tarefas:
-      - **Recursos**: está preparado para acionar automaticamente com base na conclusão do pipeline de CI. Ele também baixa o repositório para o arquivo do Bicep.
-      - **AzureResourceManagerTemplateDeployment**: implanta o Aplicativo Web do Azure usando o modelo do Bicep.
+   - **AzureResourceManagerTemplateDeployment**: Implanta o aplicativo Web do Serviço de Aplicativo do Azure usando o modelo bicep.
+   - **AzureRmWebAppDeployment**: Publica o site no aplicativo Web do Serviço de Aplicativo do Azure.
+
 1. Seu pipeline assumirá um nome com base no nome do projeto. Vamos renomeá-lo para identificar melhor o pipeline.
 
 1. Vá para **Pipelines > Pipelines** e selecione o pipeline criado recentemente. Selecione as reticências e, em seguida, selecione a opção **Renomear/mover**.
@@ -206,7 +145,7 @@ Agora você deve ter dois pipelines em execução em seu projeto eShopOnWeb.
 
 ![Captura de tela dos pipelines de CI/CD executados com êxito.](media/pipeline-successful-executed.png)
 
-#### Tarefa 4: mover as variáveis de pipeline de CD para um modelo YAML
+#### Tarefa 3: Mover as variáveis de pipeline de CD para um modelo de YAML
 
 Nesta tarefa, você criará um modelo YAML para armazenar as variáveis usadas no pipeline de CD. Isso permitirá que você reutilize o modelo em outros pipelines.
 
@@ -218,37 +157,38 @@ Nesta tarefa, você criará um modelo YAML para armazenar as variáveis usadas n
 
 1. Adicione a seção de variáveis usada no pipeline do CD ao novo arquivo. O arquivo deverá ter a seguinte aparência:
 
-    ```YAML
-    variables:
-      resource-group: 'rg-eshoponweb-secure'
-      location: 'southcentralus' #name of the Azure region you want to deploy your resources
-      templateFile: '.azure/bicep/webapp.bicep'
-      subscriptionid: 'YOUR-SUBSCRIPTION-ID'
-      azureserviceconnection: 'YOUR-AZURE-SERVICE-CONNECTION-NAME'
-      webappname: 'eshoponweb-lab-secure'
+   ```yaml
+   variables:
+     resource-group: 'rg-eshoponweb-secure'
+     location: 'southcentralus' #the name of the Azure region you want to deploy your resources
+     templateFile: '.azure/bicep/webapp.bicep'
+     subscriptionid: 'YOUR-SUBSCRIPTION-ID'
+     azureserviceconnection: 'azure subs' #the name of the service connection to your Azure subscription
+     webappname: 'eshoponweb-lab-secure-XXXXXX' #the globally unique name of the web app
+   ```
 
-    ```
+   > [!IMPORTANT]
+   > Substitua os valores das variáveis pelos valores do seu ambiente (grupo de recursos, local, ID da assinatura, conexão de serviço do Azure e nome do aplicativo Web).
 
-    > [!IMPORTANT]
-    > Substitua os valores das variáveis pelos valores do seu ambiente (grupo de recursos, local, ID da assinatura, conexão de serviço do Azure e nome do aplicativo Web).
+1. Selecione **Confirmar**, na caixa de texto de comentário de confirmação, insira `[skip ci]` e selecione **Confirmar**.
 
-1. Selecione **Confirmar**, adicione um comentário e, em seguida, selecione o botão **Confirmar**.
+   > [!NOTE]
+   > Ao adicionar o comentário `[skip ci]` ao confirmar, você impedirá a execução automática do pipeline, que, neste ponto, é executado por padrão após cada alteração no repositório. 
 
-1. Abra a definição de pipeline **eshoponweb-cd-webapp-code.yml** e substitua a seção de variáveis pelo seguinte:
+1. Na lista de arquivos no repositório, abra a definição de pipeline **eshoponweb-cd-webapp-code.yml** e substitua a seção de variáveis pelo seguinte:
 
-    ```YAML
-    variables:
-      - template: eshoponweb-secure-variables.yml
-    ```
+   ```yaml
+   variables:
+     - template: eshoponweb-secure-variables.yml
+   ```
 
-    > [!NOTE]
-    > Se você estiver usando um caminho diferente para o arquivo de modelo, será necessário atualizar o caminho na definição de pipeline.
+1. Selecione **Confirmar**, aceite o comentário padrão e selecione **Confirmar** para executar o pipeline novamente.
 
-1. Selecione **Salvar** e **Executar** o pipeline novamente.
+1. Verifique se a execução do pipeline foi concluída com êxito. 
 
-Agora você tem um modelo YAML com as variáveis usadas no pipeline de CD. Você pode reutilizar esse modelo em outros pipelines em cenários em que você precisa implantar os mesmos recursos. Além disso, sua equipe de operações pode controlar o grupo de recursos e o local onde os recursos são implantados e outras informações em seus valores de modelo, e você não precisa fazer alterações na definição de pipeline.
+Agora você tem um modelo YAML com as variáveis usadas no pipeline de CD. Você pode reutilizar esse modelo em outros pipelines em cenários em que você precisa implantar os mesmos recursos. Além disso, sua equipe de operações pode controlar o grupo de recursos e o local onde os recursos são implantados e outras informações em seus valores de modelo e você não precisará fazer nenhuma alteração na definição do pipeline.
 
-#### Tarefa 5: mover os modelos YAML para um repositório e projeto separados
+#### Tarefa 4: Mover os modelos de YAML para um repositório e um projeto separados
 
 Nesta tarefa, você moverá os modelos YAML para um repositório e projeto separados.
 
@@ -260,33 +200,33 @@ Nesta tarefa, você moverá os modelos YAML para um repositório e projeto separ
 
 1. Confirme as alterações.
 
-1. Abra a definição de pipeline **eshoponweb-cd-webapp-code.yml** a partir do projeto eShopOnWeb.
+1. Abra a definição de pipeline**eshoponweb-cd-webapp-code.yml** no repositório do eShopOnWeb.
 
 1. Adicione o seguinte à seção de recursos:
 
-    ```YAML
-    resources:
-      repositories:
-        - repository: eShopSecurity
-          type: git
-          name: eShopSecurity/eShopSecurity #name of the project and repository
-
-    ```
+   ```yaml
+     repositories:
+       - repository: eShopSecurity
+         type: git
+         name: eShopSecurity/eShopSecurity #name of the project and repository
+   ```
 
 1. Substitua a seção variáveis pelo conteúdo a seguir:
 
-    ```YAML
-    variables:
-      - template: eshoponweb-secure-variables.yml@eShopSecurity #name of the template and repository
-    ```
+   ```yaml
+   variables:
+     - template: eshoponweb-secure-variables.yml@eShopSecurity #name of the template and repository
+   ```
 
-    ![Captura de tela da definição do pipeline com as novas variáveis e seções de recursos.](media/pipeline-variables-resource-section.png)
+   ![Captura de tela da definição do pipeline com as novas variáveis e seções de recursos.](media/pipeline-variables-resource-section.png)
 
-1. Selecione **Salvar** e **Executar** o pipeline novamente. Você verá que o pipeline está usando o modelo YAML do repositório eShopSecurity.
+1. Selecione **Confirmar**, aceite o comentário padrão e selecione **Confirmar** para executar o pipeline novamente.
 
-    ![Captura de tela da execução do pipeline usando o modelo YAML do repositório eShopSecurity.](media/pipeline-execution-using-template.png)
+1. Navegue até a execução do pipeline e verifique se o pipeline está usando o arquivo YAML do repositório eShopSecurity.
 
-Agora você tem os modelos YAML em um repositório e projeto separados. Você pode reutilizar esses modelos em outros pipelines em cenários em que você precisa implantar os mesmos recursos. Além disso, sua equipe de operações pode controlar o grupo de recursos, o local, a segurança e onde os recursos são implantados e outras informações em seus valores de modelo, e você não precisa fazer alterações na definição de pipeline.
+   ![Captura de tela da execução do pipeline usando o modelo YAML do repositório eShopSecurity.](media/pipeline-execution-using-template.png)
+
+Agora você tem o arquivo YAML em um repositório e projeto separados. Reutilize esse arquivo em outros pipelines em cenários em que precisa implantar os mesmos recursos. Além disso, sua equipe de operações poderá controlar o grupo de recursos, o local, a segurança, onde os recursos são implantados, e outras informações, modificando valores no arquivo YAML e não precisará fazer nenhuma alteração na definição do pipeline.
 
 ### Exercício 2: executar a limpeza dos recursos do Azure e do Azure DevOps
 
@@ -294,12 +234,12 @@ Neste exercício, você removerá os recursos do Azure e do Azure DevOps criados
 
 #### Tarefa 1: remover recursos do Azure
 
-1. No portal do Azure, abra o grupo de recursos criado e selecione **Excluir grupo de recursos** para todos os recursos criados neste laboratório.
+1. No portal do Azure, navegue até o grupo de recursos **rg-eshoponweb-secure** que contém recursos implantados e selecione **Excluir grupo de recursos**, para excluir todos os recursos criados neste laboratório.
 
-    ![Captura de tela do botão excluir grupo de recursos.](media/delete-resource-group.png)
+   ![Captura de tela do botão excluir grupo de recursos.](media/delete-resource-group.png)
 
-    > [!WARNING]
-    > Lembre-se sempre de remover todos os recursos do Azure que você não usa mais. Remover recursos não utilizados garante que você não veja encargos inesperados.
+   > [!WARNING]
+   > Lembre-se sempre de remover todos os recursos do Azure que você não usa mais. Remover recursos não utilizados garante que você não veja encargos inesperados.
 
 #### Tarefa 2: remover pipelines do Azure DevOps
 
@@ -309,7 +249,31 @@ Neste exercício, você removerá os recursos do Azure e do Azure DevOps criados
 
 1. Acesse **Pipelines > Pipelines**.
 
-1. Vá para **Pipelines > Pipelines** e remova os pipelines existentes.
+1. Acesse **Pipelines > Pipelines** e exclua os pipelines existentes.
+
+#### Tarefa 3: Criar novamente o repositório do Azure DevOps
+
+1. No portal do Azure DevOps, no projeto **eShopOnWeb**, selecione **Configurações do projeto** no canto inferior esquerdo.
+
+1. No menu vertical **Configurações do projeto** no lado esquerdo, na seção **Repositórios**, selecione **Repositórios**.
+
+1. No painel **Todos os Repositórios**, passe o mouse sobre a extremidade direita da entrada do repositório do **eShopOnWeb** até que o ícone de reticências **Mais opções** apareça. Selecione-o e, no menu **Mais opções**, selecione **Renomear**.  
+
+1. Na janela **Renomear o repositório eShopOnWeb**, na caixa de texto **Nome do repositório**, insira **eShopOnWeb_old** e selecione **Renomear**.
+
+1. De volta ao painel **Todos os Repositórios**, selecione **+ Criar**.
+
+1. No painel **Criar um repositório**, na caixa de texto **Nome do repositório**, insira **eShopOnWeb**, desmarque a caixa de seleção **Adicionar um LEIAME** e selecione **Criar**.
+
+1. De volta ao painel **Todos os Repositórios**, passe o mouse sobre a extremidade direita da entrada do repositório **eShopOnWeb_old** até que o ícone de reticências **Mais opções** apareça. Selecione-o e, no menu **Mais opções**, selecione **Excluir**.  
+
+1. Na janela **Excluir o repositório eShopOnWeb_old**, insira **eShopOnWeb_old** e selecione **Excluir**.
+
+1. No menu de navegação esquerdo do portal do Azure DevOps, selecione **Repositórios**.
+
+1. No painel o **eShopOnWeb está vazio. Adicione algum código!** no painel, selecione **Importar um repositório**.
+
+1. Na janela **Importar um repositório do Git**, cole a seguinte URL `https://github.com/MicrosoftLearning/eShopOnWeb` e selecione **Importar**:
 
 ## Revisão
 
