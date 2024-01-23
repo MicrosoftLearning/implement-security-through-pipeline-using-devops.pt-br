@@ -23,12 +23,10 @@ Você precisará de uma assinatura do Azure, da organização do Azure DevOps e 
 
 Neste exercício, você importará e executará o pipeline de CI para o aplicativo eShopOnWeb e configurará permissões específicas de pipeline.
 
-#### Tarefa 1: (se concluído, ignorar) importar e executar o pipeline de CI
+#### Tarefa 1:  Importar e executar o pipeline de CI
 
 > [!NOTE]
-> Pule a importação se já a tiver feito em outro laboratório.
-
-Comece importando o pipeline de CI chamado [eshoponweb-ci.yml](https://github.com/MicrosoftLearning/eShopOnWeb/blob/main/.ado/eshoponweb-ci.yml).
+> Comece importando o pipeline de CI chamado [eshoponweb-ci.yml](https://github.com/MicrosoftLearning/eShopOnWeb/blob/main/.ado/eshoponweb-ci.yml).
 
 1. Navegue até o portal do Azure DevOps em `https://dev.azure.com` e abra sua organização.
 
@@ -36,7 +34,7 @@ Comece importando o pipeline de CI chamado [eshoponweb-ci.yml](https://github.co
 
 1. Acesse **Pipelines > Pipelines**.
 
-1. Selecione o botão **Novo pipeline** .
+1. Selecione **Novo Pipeline**.
 
 1. Selecione **Git do Azure Repos (Yaml)**.
 
@@ -48,45 +46,64 @@ Comece importando o pipeline de CI chamado [eshoponweb-ci.yml](https://github.co
 
 1. Clique no botão **Executar** para executar o pipeline.
 
-1. Seu pipeline assumirá um nome com base no nome do projeto. Renomeie-o para identificar melhor o pipeline.
+   > [!NOTE]
+   > Seu pipeline assumirá um nome com base no nome do projeto. Renomeie-o para identificar melhor o pipeline.
 
 1. Vá para **Pipelines > Pipelines**, selecione o pipeline criado recentemente, selecione as reticências e selecione a opção **Renomear/mover**.
 
 1. Nomeie-o **eshoponweb-ci** e selecione **Salvar**.
 
-### Tarefa 2: configurar e executar o pipeline com permissões específicas
+#### Tarefa 2: configurar e executar o pipeline com permissões específicas
 
-Nesta tarefa, você configurará o pipeline de CI para ser executado com um pool de agentes específico e validará as permissões para executar o pipeline. Você precisa ter permissões para editar o pipeline e adicionar permissões ao pool de agentes.
+> [!NOTE]
+> Para usar o pool de agentes configurado nesta tarefa, primeiro você precisará iniciar a VM do Azure que hospeda o agente. 
+
+1. No seu navegador, abra o portal do Azure em `https://portal.azure.com`.
+
+1. No portal do Azure, navegue até a página exibindo a VM do Azure **eshoponweb-vm** implantada neste laboratório
+
+1. Na página da VM do Azure **eshoponweb-vm**, na barra de ferramentas, selecione **Iniciar** para iniciá-la.
+
+   > [!NOTE]
+   > Em seguida, você configurará o pipeline de CI para ser executado com o pool de agentes correspondente e validará as permissões para executar o pipeline. Você precisa ter permissões para editar o pipeline e adicionar permissões ao pool de agentes.
 
 1. Acesse as Configurações do Projeto e clique em **Pools de Agentes** em **Pipelines**.
 
-1. Abra o pool de agentes **Padrão**.
+1. Abra o pool de agentes **eShopOnWebSelfPool**.
 
 1. Selecione a guia **Segurança**.
 
-1. Se não houver nenhuma restrição no pool de agentes, selecione o botão **Restringir permissões**.
+1. Na seção **Permissões de pipeline**, selecione o botão **+** e selecione o pipeline **eshoponweb-ci** para adicioná-lo à lista de pipelines com acesso ao pool de agentes.
 
-    ![Captura de tela da guia de segurança do pool de agentes sem restrições.](media/agent-pool-security-no-restriction.png)
+1. Navegue até a página do projeto **eShopOnWeb**.
 
-1. Selecione o botão **Adicionar** e selecione o pipeline **eshoponweb-ci** para adicioná-lo à lista de pipelines com acesso ao pool de agentes.
+1. Na página do projeto **eShopOnWeb**, navegue até **Pipelines > Pipelines**.
 
-1. Clique no botão **Executar** para executar o pipeline.
+1. Selecione o pipeline **eshoponweb-ci** e selecione **Editar**.
 
-1. Abra o pipeline em andamento. Se você vir a mensagem "Este pipeline precisa de permissão para acessar um recurso antes que essa execução possa continuar a Criar a solução .Net Core", selecione **Exibir**, **Permitir** e **Permitir** novamente.
+1. Na subseção **trabalhos** da seção **estágios**, atualize o valor da propriedade **pool** para fazer referência ao pool de agentes auto-hospedado **eShopOnWebSelfPool** configurado nesta tarefa para que ele tem o seguinte formato:
 
-Você conseguirá executar o pipeline com êxito.
+   ```yaml
+     jobs:
+     - job: Build
+       pool: eShopOnWebSelfPool
+       steps:
+       - task: DotNetCoreCLI@2
+   ```
 
-#### Tarefa 3: (se concluída, pular) configurar o pipeline de CD e validar permissões
+1. Selecione **Salvar** e escolha confirmar diretamente no branch principal.
 
-> [!NOTE]
-> Pule a importação se já a tiver feito em outro laboratório.
+1. Selecione **Salvar** novamente.
 
-> [!IMPORTANT]
-> Se você tiver permissões, poderá **Permitir** que o pipeline seja executado diretamente do pipeline em execução. Se você não tiver permissões, precisará usar outra conta com permissões de administração para permitir que seu pipeline seja executado usando o agente específico, conforme descrito na Tarefa 2 anterior, ou para adicionar permissões de usuário ao pool de agentes.
+1. Selecione **Executar** o pipeline e clique em **Executar** novamente.
 
-1. Acesse **Pipelines > Pipelines**.
+1. Verifique se o trabalho de compilação está em execução no agente **eShopOnWebSelfAgent** e ele é concluído com êxito.
 
-1. Selecione o botão **Novo pipeline**.
+#### Tarefa 3: Configurar o pipeline de CD e validar permissões
+
+1. No portal do Azure DevOps, na página do projeto **eShopOnWeb**, acesse **Pipelines > Pipelines**.
+
+1. Selecione **Novo pipeline**.
 
 1. Selecione **Git do Azure Repos (Yaml)**.
 
@@ -97,139 +114,170 @@ Você conseguirá executar o pipeline com êxito.
 1. Selecione o arquivo **/.ado/eshoponweb-cd-webapp-code.yml** e selecione **Continuar**.
 
 1. Na definição de pipeline YAML, na seção de variáveis, personalize:
+
+   - **AZ400-EWebShop-NAME** com o nome de sua preferência, por exemplo, **rg-eshoponweb-perm**.
+   - **Local** com o nome da região do Azure que você deseja implantar seus recursos, por exemplo, **southcentralus**.
    - **YOUR-SUBSCRIPTION-ID** com sua ID de assinatura do Azure.
-   - **az400eshop-NAME**, com um nome de aplicativo Web a ser implantado com um nome exclusivo global, por exemplo, **eshoponweb-lab-YOURNAME.**
-   - **AZ400-EWebShop-NAME** com o nome de sua preferência, por exemplo, **rg-eshoponweb**.
+   - **azure subs** com **azure subs gerenciados**
+   - **az400-webapp-NAME** com um nome global exclusivo do aplicativo Web a ser implantado, por exemplo, a cadeia de caracteres **eshoponweb-lab-perm-** seguida por um número aleatório de seis dígitos. 
 
-1. Atualize o arquivo YAML para usar a imagem **windows-latest** no pool de agentes hospedados pela Microsoft **Padrão**. Para isso, defina a seção **pool** com o seguinte valor:
+1. Atualize o arquivo YAML para usar o pool de agentes **eShopOnWebSelfPool**. Para fazer isso, defina a seção do **pool** com o seguinte valor:
 
-    ```yaml
-    pool: 
-      vmImage: windows-latest
+   ```yaml
+     jobs:
+     - job: Deploy
+       pool: eShopOnWebSelfPool
+       steps:
+       #download artifacts
+       - download: eshoponweb-ci
+   ```
 
-    ```
+1. Selecione **Salvar e executar** e, em seguida, selecione **Salvar e executar** novamente.
 
-1. Selecione **Salvar** e, em seguida, **Executar**.
+1. Abra o pipeline e observe a mensagem "Este pipeline precisa de permissão para acessar dois recursos antes que essa execução possa continuar a implantar no WebApp". Selecione **Exibir** e, em seguida, **Permitir** para permitir a execução do pipeline.
 
-1. Abra o pipeline e você verá a mensagem "Este pipeline precisa de permissão para acessar um recurso antes que essa execução possa continuar a Implantar o aplicativo Web". Selecione **Exibir** e, em seguida, **Permitir** para permitir a execução do pipeline.
+   ![Captura de tela do pipeline com botões de permissão".](media/pipeline-permission-permit.png)
 
-    ![Captura de tela do pipeline com botões de permissão".](media/pipeline-permission-permit.png)
+1. Renomeie o pipeline para **eshoponweb-cd-webapp-code**.
 
 ### Exercício 2: configurar e validar verificações de aprovação e branch
 
 Neste exercício, você configurará e validará as verificações de aprovação e branch para o pipeline de CD.
 
-#### Tarefa 1: criar um novo ambiente e adicionar aprovações e verificações
+#### Tarefa 1: Criar um ambiente e adicionar aprovações e verificações
 
-1. Vá para **Pipelines > Ambientes**.
+1. No portal do Azure DevOps, na página do projeto **eShopOnWeb**, selecione **Pipelines > Ambientes**.
 
-1. Selecione o botão **Criar ambiente**.
+1. Selecione **Criar ambiente**.
 
 1. Nomeie o ambiente **Teste**, selecione **Nenhum** como o recurso e selecione **Criar**.
 
-1. Selecione **Novo ambiente**, crie um novo ambiente **Produção**, selecione **Nenhum** como o recurso e selecione **Criar**.
+1. Selecione **Novo ambiente**, crie um novo ambiente **Produção**, verifique se **Nenhum** está selecionado como o recurso e selecione **Criar**.
 
-1. Abra o ambiente de **Teste**, selecione ***...*** e **Aprovações e verificações**.
+1. Abra o ambiente **Teste**, selecione a guia **Aprovações e verificações**.
 
 1. Selecione **Approvals**.
 
-1. Na caixa de texto **Aprovadores**, digite seu nome de usuário e, se você tiver outro usuário, adicione-o para validar o processo de aprovação.
+1. Na caixa de texto **Aprovadores**, insira o nome de usuário.
 
-1. Dê as instruções **Aprove a implantação para Testar** e selecione **Criar**.
+1. Dê as instruções **Aprovar a implantação para testar** e selecione **Criar**.
 
-    ![Captura de tela das aprovações do ambiente com instruções.](media/add-environment-approvals.png)
+   ![Captura de tela das aprovações do ambiente com instruções.](media/add-environment-approvals.png)
 
 1. Selecione o botão **+**, selecione **Controle de branch** e, em seguida, selecione **Avançar**.
 
 1. No campo **Branch permitidos**, deixe o padrão e selecione **Criar**. Você poderá adicionar mais branches se desejar.
 
-    ![Captura de tela do controle de branch do ambiente com o branch principal.](media/add-environment-branch-control.png)
+   ![Captura de tela do controle de branch do ambiente com o branch principal.](media/add-environment-branch-control.png)
 
-1. Abra o ambiente de **Produção** e execute as mesmas etapas para adicionar aprovações e controle de branch. Para diferenciar os ambientes, adicione as instruções **Aprove a implantação para Produção** e adicione o branch **refs/heads/main** aos branches permitidos.
+1. Crie outro ambiente chamado **Produção** e execute as mesmas etapas para adicionar aprovações e controle de ramificação. Para diferenciar os ambientes, adicione as instruções **Aprovar a implantação para Produção** e defina os branches permitidos como **refs/heads/main**.
 
-1. (Opcional) Você pode adicionar mais ambientes e configurar aprovações e controle de branch para eles. Além disso, você pode configurar a **Segurança** para adicionar usuários ou grupos ao ambiente.
-    - Abra o ambiente de **Teste**, selecione ***...*** e selecione **Segurança**.
-    - Selecione **Adicionar** e selecione o usuário que está executando o pipeline e a função *Usuário*, *Criador* ou *Leitor*.
-    - Selecione **Adicionar**.
-    - Clique em **Salvar**.
+> [!NOTE]
+> Você pode adicionar mais ambientes e configurar aprovações e controle de branch para eles. Além disso, você pode configurar a **Segurança** para adicionar usuários ou grupos ao ambiente com funções como *Usuário*, *Criador* ou *Leitor*.
 
 #### Tarefa 2: configurar o pipeline de CD para usar o novo ambiente
 
-1. Acesse **Pipelines > Pipelines**.
+1. No portal do Azure DevOps, na página do projeto **eShopOnWeb**, selecione **Pipelines > Pipelines**.
 
 1. Abra o pipeline **eshoponweb-cd-webapp-code**.
 
 1. Selecione **Editar**.
 
-1. Acima do comentário **#baixar artefatos**, adicione:
+1. Substitua as linhas 21-27 (diretamente acima do comentário **#download artefatos**) pelo seguinte conteúdo:
 
-    ```yaml
-    stages:
-    - stage: Test
-      displayName: Testing WebApp
-      jobs:
-      - deployment: Test
-        pool:
-          vmImage: 'windows-latest'
-        environment: Test
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-              - script: echo Hello world! Testing environments!
-    - stage: Deploy
-    displayName: Deploy to WebApp
-      jobs:
-      - deployment: Deploy
-        pool: 
-          vmImage: windows-latest
-        environment: Production
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-              - checkout: self
-    ```
+   ```yaml
+   stages:
+   - stage: Test
+     displayName: Testing WebApp
+     jobs:
+     - deployment: Test
+       pool: eShopOnWebSelfPool
+       environment: Test
+       strategy:
+         runOnce:
+           deploy:
+             steps:
+             - script: echo Hello world! Testing environments!
+   - stage: Deploy
+     displayName: Deploy to WebApp
+     jobs:
+     - deployment: Deploy
+       pool: eShopOnWebSelfPool
+       environment: Production
+       strategy:
+         runOnce:
+           deploy:
+             steps:
+             - checkout: self
+   ```
 
-    > [!NOTE]
-    > Você precisará deslocar as linhas seguindo o código acima seis espaços para a direita para garantir que as regras de recuo YAML sejam atendidas.
+   > [!NOTE]
+   > Você precisará deslocar todas as linhas seguindo o código acima de seis espaços à direita para garantir que as regras de recuo yaml sejam atendidas.
 
-    Seu pipeline deve ter esta aparência:
+   Seu pipeline deve ter esta aparência:
 
-    ![Captura de tela do pipeline com a nova implantação.](media/pipeline-add-yaml-deployment.png)
+   ![Captura de tela do pipeline com a nova implantação.](media/pipeline-add-yaml-deployment.png)
 
-1. Selecione **Salvar** e **Executar**.
+1. Selecione **Salvar** (duas vezes) e **Executar** (duas vezes).
 
-1. Abra o pipeline e você verá a mensagem "Este pipeline precisa de permissão para acessar um recurso antes que essa execução possa continuar para Testar o WebApp". Selecione **Exibir**, **Permitir** e **Permitir** novamente.
+1. Abra o estágio **Testando o WebApp** do pipeline e observe a mensagem **1 aprovação precisa de sua revisão antes que essa execução possa continuar Testando o WebApp**. Selecione **Revisar** e **Aprovar**.
 
-    ![Captura de tela do pipeline com o botão de permissão para aprovar a execução do pipeline".](media/pipeline-environment-permit.png)
-
-1. Abra o estágio **Testar o WebApp** e você verá a mensagem **Uma aprovação precisa de revisão antes que esta execução possa continuar para Testar o WebApp**. Selecione **Revisar** e **Aprovar**.
-
-    ![Captura de tela do pipeline com a Etapa de teste a ser aprovada".](media/pipeline-test-environment-approve.png)
+   ![Captura de tela do pipeline com a Etapa de teste a ser aprovada".](media/pipeline-test-environment-approve.png)
 
 1. Aguarde a conclusão do pipeline, abra o log do pipeline e verifique se a etapa **Testar o WebApp** foi executada com êxito.
 
-    ![Captura de tela do log de pipeline com a etapa Testar o WebApp executada com êxito".](media/pipeline-test-environment-success.png)
+   ![Captura de tela do log de pipeline com a etapa Testar o WebApp executada com êxito".](media/pipeline-test-environment-success.png)
 
 1. Volte para o pipeline e você verá o estágio **Implantar no WebApp** aguardando aprovação. Selecione **Revisar** e **Aprovar** como fez antes para o estágio **Testar o WebApp**.
 
-1. Aguarde até que o pipeline termine e verifique que o estágio **Implantar no WebApp** foi executado com êxito.
+1. Aguarde até que o pipeline seja concluído e verifique se o estágio **Implantar no WebApp** foi executado com êxito.
 
-    ![Captura de tela do pipeline com o estágio Implantar no WebApp a ser aprovado".](media/pipeline-deploy-environment-success.png)
+   ![Captura de tela do pipeline com o estágio Implantar no WebApp a ser aprovado".](media/pipeline-deploy-environment-success.png)
 
-Você conseguirá executar o pipeline com êxito com as verificações de aprovações e de branch em ambos os ambientes, de Teste e de Produção.
+> [!NOTE]
+> Você conseguirá executar o pipeline com êxito com as verificações de aprovações e de branch em ambos os ambientes, de Teste e de Produção.
 
-### Exercício 3: remover os recursos usados neste laboratório
+### Exercício 3: Executar a limpeza dos recursos do Azure e do Azure DevOps
 
-1. No portal do Azure, abra o grupo de recursos criado e clique em **Excluir grupo de recursos** para todos os recursos criados neste laboratório.
+Neste exercício, você removerá os recursos do Azure e do Azure DevOps criados neste laboratório.
 
-    ![Captura de tela do botão excluir grupo de recursos.](media/delete-resource-group.png)
+#### Tarefa 1: remover recursos do Azure
 
-    > [!WARNING]
-    > Lembre-se sempre de remover todos os recursos do Azure que você não usa mais. Remover recursos não utilizados garante que você não veja encargos inesperados.
+1. No portal do Azure, navegue até o grupo de recursos **rg-eshoponweb-perm** que contém recursos implantados e selecione **Excluir grupo de recursos** para excluir todos os recursos criados neste laboratório.
 
-1. Redefina as permissões específicas adicionadas à organização e ao projeto do Azure DevOps neste laboratório.
+#### Tarefa 2: remover pipelines do Azure DevOps
+
+1. Navegue até o portal do Azure DevOps em `https://dev.azure.com` e abra sua organização.
+
+1. Abra o projeto **eShopOnWeb**.
+
+1. Acesse **Pipelines > Pipelines**.
+
+1. Vá para **Pipelines > Pipelines** e exclua os pipelines existentes.
+
+#### Tarefa 3: Recriar o repositório do Azure DevOps
+
+1. No portal do Azure DevOps, no projeto **eShopOnWeb**, selecione **Configurações do projeto** no canto inferior esquerdo.
+
+1. No menu vertical **Configurações do projeto** ao lado esquerdo, na seção **Repositórios**, selecione **Repositórios**.
+
+1. No painel **Todos os Repositórios**, passe o mouse sobre a extremidade direita da entrada do repositório **eShopOnWeb** até que o ícone de reticências **Mais opções** apareça. Selecione-o e, no menu **Mais opções**, selecione **Renomear**.  
+
+1. Na janela **Renomear o repositório eShopOnWeb**, na caixa de texto **Nome do repositório**, insira **eShopOnWeb_old** e selecione **Renomear**.
+
+1. De volta ao painel **Todos os Repositórios**, selecione **+ Criar**.
+
+1. No painel **Criar um repositório**, na caixa de texto **Nome do repositório**, insira **eShopOnWeb**, desmarque a caixa de seleção **Adicionar um LEIAME** e selecione **Criar**.
+
+1. De volta ao painel **Todos os Repositórios**, passe o mouse sobre a extremidade direita da entrada do repositório **eShopOnWeb_old** até que o ícone de reticências **Mais opções** apareça. Selecione-o e, no menu **Mais opções**, selecione **Excluir**.  
+
+1. Na janela **Excluir o repositório eShopOnWeb_old**, insira **eShopOnWeb_old** e selecione **Excluir**.
+
+1. No menu de navegação esquerdo do portal do Azure DevOps, selecione **Repositórios**.
+
+1. No **eShopOnWeb está vazio. Adicione algum código!** painel, selecione **Importar um repositório**.
+
+1. Na janela **Importar um repositório do Git**, cole a seguinte URL `https://github.com/MicrosoftLearning/eShopOnWeb` e selecione **Importar**:
 
 ## Revisão
 

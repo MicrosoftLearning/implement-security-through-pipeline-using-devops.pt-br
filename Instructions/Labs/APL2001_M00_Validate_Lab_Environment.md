@@ -14,7 +14,7 @@ Para se preparar para os laboratórios, é crucial ter seu ambiente configurado 
 
 - **Configurar uma organização do Azure DevOps:** se você ainda não tiver uma organização do Azure DevOps que possa usar para os laboratório, crie uma seguindo as instruções disponíveis nesta página ou em [Criar uma organização ou coleção de projetos](https://learn.microsoft.com/azure/devops/organizations/accounts/create-organization).
   
-- Página de download do [Git para Windows](https://gitforwindows.org/). Ele será instalado como parte dos pré-requisitos deste laboratório.
+- [Página de download do Git for Windows](https://gitforwindows.org/). Ele será instalado como parte dos pré-requisitos deste laboratório.
 
 - [Visual Studio Code](https://code.visualstudio.com/). Ele será instalado como parte dos pré-requisitos deste laboratório.
 
@@ -54,13 +54,13 @@ Para se preparar para os laboratórios, é crucial ter seu ambiente configurado 
 
 1. Talvez você **aguarde pelo menos 3 horas antes de usar os recursos de CI/CD** para que as novas configurações sejam refletidas no back-end. Caso contrário, você ainda verá a mensagem *"Nenhum paralelismo hospedado foi comprado ou concedido"*.
 
-## Instruções para criar o projeto de exemplo do Azure DevOps (você só precisa fazer isso uma vez)
+## Instruções para criar e configurar o projeto do Azure DevOps (você só precisa fazer isso uma vez)
 
 > **Observação**: certifique-se de concluir as etapas para criar sua Organização do Azure DevOps antes de continuar com essas etapas.
 
-Para seguir todas as instruções do laboratório, você precisará configurar um novo projeto do Azure DevOps e criar um repositório baseado no aplicativo [ eShopOnWeb](https://github.com/MicrosoftLearning/eShopOnWeb).
+Para seguir todas as instruções do laboratório, você precisará configurar um novo projeto do Azure DevOps, criar um repositório baseado no aplicativo [eShopOnWeb](https://github.com/MicrosoftLearning/eShopOnWeb) e criar uma conexão de serviço com sua assinatura do Azure.
 
-### Criar e configurar a equipe de projeto
+### Criar o Projeto de Equipe
 
 Primeiro, você criará um projeto **eShopOnWeb** do Azure DevOps para ser usado por vários laboratórios.
 
@@ -74,7 +74,7 @@ Primeiro, você criará um projeto **eShopOnWeb** do Azure DevOps para ser usado
 
 1. Selecione **Criar**.
 
-    ![Criar Projeto](media/create-project.png)
+   ![Criar Projeto](media/create-project.png)
 
 ### Importar repositório git eShopOnWeb
 
@@ -88,14 +88,76 @@ Agora, você importará o eShopOnWeb para seu repositório do git.
 
 1. Na janela **Importar um repositório do Git**, cole a seguinte URL `https://github.com/MicrosoftLearning/eShopOnWeb` e selecione **Importar**:
 
-    ![Importar repositório](media/import-repo.png)
+   ![Importar repositório](media/import-repo.png)
 
 1. O repositório está organizado da seguinte forma:
-    
-    - A pasta **.ado** contém os pipelines YAML do Azure DevOps.
-    - O contêiner da pasta **.devcontainer** está configurado para o desenvolvimento usando contêineres (localmente no VS Code ou no GitHub Codespaces).
-    - A pasta **.azure** contém modelos da infraestrutura como código do Bicep e do ARM.
-    - A pasta **.github** contém definições de fluxo de trabalho YAML do GitHub.
-    - A pasta **src** contém o site do .NET 6 usado nos cenários do laboratório.
+
+   - A pasta **.ado** contém os pipelines YAML do Azure DevOps.
+   - O contêiner da pasta **.devcontainer** está configurado para o desenvolvimento usando contêineres (localmente no VS Code ou no GitHub Codespaces).
+   - A pasta **.azure** contém modelos da infraestrutura como código do Bicep e do ARM.
+   - A pasta **.github** contém definições de fluxo de trabalho YAML do GitHub.
+   - A pasta **src** contém o site do .NET 6 usado nos cenários do laboratório. 
+
+1. Deixe a janela do navegador da Web aberta.  
+
+### Criar uma entidade de serviço e uma conexão de serviço para acessar recursos do Azure
+
+Em seguida, você criará uma entidade de serviço usando a CLI do Azure e uma conexão de serviço no Azure DevOps que permitirá implantar e acessar recursos em sua assinatura do Azure.
+
+1. Inicie um navegador da Web, navegue até o Portal do Azure em `https://portal.azure.com` e entre com a conta de usuário que tem a função proprietário na assinatura do Azure que você usará nos laboratórios deste curso e tenha a função de Administrador Global no locatário do Microsoft Entra associado a essa assinatura.
+
+1. No portal do Azure, selecione o ícone **Cloud Shell** na parte superior da página à direita da caixa de pesquisa.
+
+1. Se for solicitado que você selecione **Bash** ou **PowerShell**, selecione **Bash**.
+
+   > [!NOTE]
+   > Se esta for a primeira vez que você estiver iniciando o **Cloud Shell** e receber a mensagem **Você não tem nenhum armazenamento montado**, selecione a assinatura que você está usando no laboratório e selecione **Criar armazenamento**.
+
+1. No prompt **Bash**, no painel **Cloud Shell**, execute os seguintes comandos para recuperar os valores da ID de assinatura do Azure e dos atributos de nome de assinatura:
+
+   ```bash
+   subscriptionName=$(az account show --query name --output tsv)
+   subscriptionId=$(az account show --query id --output tsv)
+   echo $subscriptionName
+   echo $subscriptionId
+   ```
+
+   > [!NOTE]
+   > Copie ambos os valores para um arquivo de texto. Você precisará delas nos laboratórios deste curso.
+
+1. No prompt **Bash**, no painel **Cloud Shell**, execute o seguinte comando para criar uma entidade de serviço:
+
+   ```bash
+   az ad sp create-for-rbac --name sp-eshoponweb-azdo --role contributor --scopes /subscriptions/$subscriptionId
+   ```
+
+   > [!NOTE]
+   > O comando gerará uma saída JSON. Copie a saída no arquivo de texto. Você precisará dele em breve.
+
+   > [!NOTE]
+   > Registre o valor, nome da entidade de segurança, sua ID e ID de locatário incluídas na saída JSON. Você precisará delas nos laboratórios deste curso.
+
+1. Volte para a janela do navegador da Web exibindo o portal do Azure DevOps com o projeto **eShopOnWeb** aberto e selecione **Configurações de Projeto** no canto inferior esquerdo do portal.
+
+1. Em Pipelines, selecione **Conexões de serviço** e, em seguida, selecione o botão **Criar conexão de serviço**.
+
+   ![Captura de tela do botão de criação da nova conexão de serviço.](media/new-service-connection.png)
+
+1. Na folha **Nova conexão de serviço**, escolha **Azure Resource Manager** e **Avançar** (talvez seja necessário rolar para baixo).
+
+1. Depois selecione **Entidade de serviço (manual)** e **Avançar**.
+
+1. Preencha os campos vazios usando as informações coletadas durante as etapas anteriores:
+
+   - ID e nome da assinatura.
+   - ID da entidade de serviço (ou clientId/AppId), chave da entidade de serviço (ou senha) e TenantId.
+   - Em **Nome da conexão de serviço**, digite **azure subs**. Esse nome será referenciado em pipelines YAML para fazer referência à conexão de serviço para acessar sua assinatura do Azure.
+
+   ![Captura de tela da configuração da conexão de serviço do Azure.](media/azure-service-connection.png)
+
+1. Não marque **Conceder permissão de acesso a todos os pipelines**. Selecione **Verificar e salvar**.
+
+   > [!NOTE]
+   > A opção **Conceder permissão de acesso a todos os pipelines** não é recomendada para ambientes de produção. Ela só é usada neste laboratório para simplificar a configuração do pipeline.
 
 Agora você concluiu as etapas necessárias para continuar com os laboratórios.
