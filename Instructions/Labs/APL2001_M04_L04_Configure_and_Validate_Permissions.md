@@ -81,7 +81,7 @@ Neste exercício, você importará e executará o pipeline de CI para o aplicati
 
 1. Selecione o pipeline **eshoponweb-ci** e selecione **Editar**.
 
-1. Na subseção **trabalhos** da seção **estágios**, atualize o valor da propriedade **pool** para fazer referência ao pool de agentes auto-hospedado **eShopOnWebSelfPool** configurado nesta tarefa para que ele tem o seguinte formato:
+1. Na subseção **trabalhos** da seção **estágios**, atualize o valor da propriedade **pool** para fazer referência ao pool de agentes auto-hospedado **eShopOnWebSelfPool** configurado nesta tarefa para que ele tenha o seguinte formato:
 
    ```yaml
      jobs:
@@ -91,13 +91,13 @@ Neste exercício, você importará e executará o pipeline de CI para o aplicati
        - task: DotNetCoreCLI@2
    ```
 
-1. Selecione **Salvar** e escolha confirmar diretamente no branch principal.
+1. Selecione **Salvar** e escolha confirmar diretamente na ramificação principal.
 
 1. Selecione **Salvar** novamente.
 
 1. Selecione **Executar** o pipeline e clique em **Executar** novamente.
 
-1. Verifique se o trabalho de compilação está em execução no agente **eShopOnWebSelfAgent** e ele é concluído com êxito.
+1. Verifique se o trabalho de compilação está em execução no agente **eShopOnWebSelfAgent** e se é concluído com êxito.
 
 #### Tarefa 3: Configurar o pipeline de CD e validar permissões
 
@@ -170,10 +170,10 @@ Neste exercício, você configurará e validará as verificações de aprovaçã
 
    ![Captura de tela do controle de branch do ambiente com o branch principal.](media/add-environment-branch-control.png)
 
-1. Crie outro ambiente chamado **Produção** e execute as mesmas etapas para adicionar aprovações e controle de ramificação. Para diferenciar os ambientes, adicione as instruções **Aprovar a implantação para Produção** e defina os branches permitidos como **refs/heads/main**.
+1. Crie outro ambiente chamado **Produção** e execute as mesmas etapas para adicionar aprovações e controle de ramificação. Para diferenciar os ambientes, adicione as instruções **Aprovar a implantação para Produção** e defina as ramificações permitidas como **refs/heads/main**.
 
 > [!NOTE]
-> Você pode adicionar mais ambientes e configurar aprovações e controle de branch para eles. Além disso, você pode configurar a **Segurança** para adicionar usuários ou grupos ao ambiente com funções como *Usuário*, *Criador* ou *Leitor*.
+> Você pode adicionar mais ambientes e configurar aprovações e controle de ramificação para eles. Além disso, você pode configurar a **Segurança** para adicionar usuários ou grupos ao ambiente com funções como *Usuário*, *Criador* ou *Leitor*.
 
 #### Tarefa 2: configurar o pipeline de CD para usar o novo ambiente
 
@@ -259,7 +259,7 @@ Neste exercício, você removerá os recursos do Azure e do Azure DevOps criados
 
 1. No portal do Azure DevOps, no projeto **eShopOnWeb**, selecione **Configurações do projeto** no canto inferior esquerdo.
 
-1. No menu vertical **Configurações do projeto** ao lado esquerdo, na seção **Repositórios**, selecione **Repositórios**.
+1. No menu vertical **Configurações do projeto** no lado esquerdo, na seção **Repositórios**, selecione **Repositórios**.
 
 1. No painel **Todos os Repositórios**, passe o mouse sobre a extremidade direita da entrada do repositório **eShopOnWeb** até que o ícone de reticências **Mais opções** apareça. Selecione-o e, no menu **Mais opções**, selecione **Renomear**.  
 
