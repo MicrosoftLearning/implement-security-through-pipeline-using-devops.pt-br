@@ -161,7 +161,7 @@ Nesta tarefa, você criará um modelo YAML para armazenar as variáveis usadas n
    variables:
      resource-group: 'rg-eshoponweb-secure'
      location: 'southcentralus' #the name of the Azure region you want to deploy your resources
-     templateFile: '.azure/bicep/webapp.bicep'
+     templateFile: 'infra/webapp.bicep'
      subscriptionid: 'YOUR-SUBSCRIPTION-ID'
      azureserviceconnection: 'azure subs' #the name of the service connection to your Azure subscription
      webappname: 'eshoponweb-lab-secure-XXXXXX' #the globally unique name of the web app
@@ -249,9 +249,9 @@ Neste exercício, você removerá os recursos do Azure e do Azure DevOps criados
 
 1. Acesse **Pipelines > Pipelines**.
 
-1. Acesse **Pipelines > Pipelines** e exclua os pipelines existentes.
+1. Vá para **Pipelines > Pipelines** e exclua os pipelines existentes.
 
-#### Tarefa 3: Criar novamente o repositório do Azure DevOps
+#### Tarefa 3: Recriar o repositório do Azure DevOps
 
 1. No portal do Azure DevOps, no projeto **eShopOnWeb**, selecione **Configurações do projeto** no canto inferior esquerdo.
 
@@ -271,7 +271,7 @@ Neste exercício, você removerá os recursos do Azure e do Azure DevOps criados
 
 1. No menu de navegação esquerdo do portal do Azure DevOps, selecione **Repositórios**.
 
-1. No painel o **eShopOnWeb está vazio. Adicione algum código!** no painel, selecione **Importar um repositório**.
+1. No painel **eShopOnWeb está vazio. Adicione algum código!** selecione **Importar um repositório**.
 
 1. Na janela **Importar um repositório do Git**, cole a seguinte URL `https://github.com/MicrosoftLearning/eShopOnWeb` e selecione **Importar**:
 

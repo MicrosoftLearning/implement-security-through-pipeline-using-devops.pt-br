@@ -15,7 +15,7 @@ Estes exercícios levam aproximadamente **30** minutos.
 Você precisará de uma assinatura do Azure, da organização do Azure DevOps e do aplicativo eShopOnWeb para acompanhar os laboratórios.
 
 - Siga as etapas para [validar seu ambiente de laboratório](APL2001_M00_Validate_Lab_Environment.md).
-- Instale um agente auto-hospedado seguindo o laboratório [Configurar agentes e pools de agentes para pipelines seguros](/Instructions/Labs/APL2001_M03_L03_Configure_Agents_And_Agent_Pools_for_Secure_Pipelines.md) ou as etapas em [Instalar um agente auto-hospedado](https://docs.microsoft.com/azure/devops/pipelines/agents/v2-windows?view=azure-devops#install).
+- Instale um agente auto-hospedado seguindo o laboratório [Configurar agentes e pools de agentes para pipelines seguros](/Instructions/Labs/APL2001_M02_L02_Configure_Agents_And_Agent_Pools_for_Secure_Pipelines.md) ou as etapas em [Instalar um agente auto-hospedado](https://docs.microsoft.com/azure/devops/pipelines/agents/v2-windows?view=azure-devops#install).
 
 ## Instruções
 
@@ -81,7 +81,7 @@ Neste exercício, você importará e executará o pipeline de CI para o aplicati
 
 1. Selecione o pipeline **eshoponweb-ci** e selecione **Editar**.
 
-1. Na subseção **trabalhos** da seção **estágios**, atualize o valor da propriedade **pool** para fazer referência ao pool de agentes auto-hospedado **eShopOnWebSelfPool** configurado nesta tarefa para que ele tenha o seguinte formato:
+1. Na subseção **trabalhos** da seção **estágios**, atualize o valor da propriedade **pool** para fazer referência ao pool de agentes auto-hospedado **eShopOnWebSelfPool** configurado nesta tarefa para que ele tem o seguinte formato:
 
    ```yaml
      jobs:
@@ -91,13 +91,13 @@ Neste exercício, você importará e executará o pipeline de CI para o aplicati
        - task: DotNetCoreCLI@2
    ```
 
-1. Selecione **Salvar** e escolha confirmar diretamente na ramificação principal.
+1. Selecione **Salvar** e escolha confirmar diretamente no branch principal.
 
 1. Selecione **Salvar** novamente.
 
 1. Selecione **Executar** o pipeline e clique em **Executar** novamente.
 
-1. Verifique se o trabalho de compilação está em execução no agente **eShopOnWebSelfAgent** e se é concluído com êxito.
+1. Verifique se o trabalho de compilação está em execução no agente **eShopOnWebSelfAgent** e ele é concluído com êxito.
 
 #### Tarefa 3: Configurar o pipeline de CD e validar permissões
 
@@ -170,10 +170,10 @@ Neste exercício, você configurará e validará as verificações de aprovaçã
 
    ![Captura de tela do controle de branch do ambiente com o branch principal.](media/add-environment-branch-control.png)
 
-1. Crie outro ambiente chamado **Produção** e execute as mesmas etapas para adicionar aprovações e controle de ramificação. Para diferenciar os ambientes, adicione as instruções **Aprovar a implantação para Produção** e defina as ramificações permitidas como **refs/heads/main**.
+1. Crie outro ambiente chamado **Produção** e execute as mesmas etapas para adicionar aprovações e controle de ramificação. Para diferenciar os ambientes, adicione as instruções **Aprovar a implantação para Produção** e defina os branches permitidos como **refs/heads/main**.
 
 > [!NOTE]
-> Você pode adicionar mais ambientes e configurar aprovações e controle de ramificação para eles. Além disso, você pode configurar a **Segurança** para adicionar usuários ou grupos ao ambiente com funções como *Usuário*, *Criador* ou *Leitor*.
+> Você pode adicionar mais ambientes e configurar aprovações e controle de branch para eles. Além disso, você pode configurar a **Segurança** para adicionar usuários ou grupos ao ambiente com funções como *Usuário*, *Criador* ou *Leitor*.
 
 #### Tarefa 2: configurar o pipeline de CD para usar o novo ambiente
 
@@ -259,7 +259,7 @@ Neste exercício, você removerá os recursos do Azure e do Azure DevOps criados
 
 1. No portal do Azure DevOps, no projeto **eShopOnWeb**, selecione **Configurações do projeto** no canto inferior esquerdo.
 
-1. No menu vertical **Configurações do projeto** no lado esquerdo, na seção **Repositórios**, selecione **Repositórios**.
+1. No menu vertical **Configurações do projeto** ao lado esquerdo, na seção **Repositórios**, selecione **Repositórios**.
 
 1. No painel **Todos os Repositórios**, passe o mouse sobre a extremidade direita da entrada do repositório **eShopOnWeb** até que o ícone de reticências **Mais opções** apareça. Selecione-o e, no menu **Mais opções**, selecione **Renomear**.  
 
@@ -275,7 +275,7 @@ Neste exercício, você removerá os recursos do Azure e do Azure DevOps criados
 
 1. No menu de navegação esquerdo do portal do Azure DevOps, selecione **Repositórios**.
 
-1. No **eShopOnWeb está vazio. Adicione algum código!** painel, selecione **Importar um repositório**.
+1. No painel **eShopOnWeb está vazio. Adicione algum código!** selecione **Importar um repositório**.
 
 1. Na janela **Importar um repositório do Git**, cole a seguinte URL `https://github.com/MicrosoftLearning/eShopOnWeb` e selecione **Importar**:
 
