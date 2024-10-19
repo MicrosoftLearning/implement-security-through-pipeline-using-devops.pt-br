@@ -77,8 +77,8 @@ Nesta tarefa, você definirá parâmetros e tipos de parâmetros para o pipeline
 
 1. Substitua os caminhos codificados nas tarefas `Restore`, `Build` e `Test` pelos parâmetros que você acabou de criar.
 
-   - **Substitua projetos**: `**/*.sln` por projetos: `${{ "{{" }} parameters.dotNetProjects }}` nas tarefas `Restore` e `Build`.
-   - **Substituir projetos**: `tests/UnitTests/*.csproj` por projetos: `${{ "{{" }} parametertestProjects }}` na tarefa `Test`
+   - **Substitua projetos**: `**/*.sln` por projetos: `${{ parameters.dotNetProjects }}` nas tarefas `Restore` e `Build`.
+   - **Substituir projetos**: `tests/UnitTests/*.csproj` por projetos: `${{ parameters.testProjects }}` na tarefa `Test`
 
     As tarefas `Restore`, `Build` e `Test` na seção de etapas do arquivo YAML devem ter esta aparência:
 
