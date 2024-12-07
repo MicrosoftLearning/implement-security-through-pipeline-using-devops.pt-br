@@ -20,6 +20,8 @@ Para se preparar para os laboratórios, é crucial ter seu ambiente configurado 
 
 - [CLI do Azure](https://learn.microsoft.com/cli/azure/install-azure-cli). Instale a CLI do Azure nos computadores de agente auto-hospedados.
 
+- [SDK do .NET – Versão mais recente](https://dotnet.microsoft.com/download/visual-studio-sdks). Instale o SDK do .NET nos computadores de agente auto-hospedados.
+
 ## Instruções para criar uma Organização do DevOps do Azure (você só precisa fazer isso uma vez)
 
 > **Observação**: comece na etapa 3 se você já tiver uma configuração de **Conta Microsoft pessoal** e uma Assinatura do Azure ativa vinculada a essa conta.
@@ -52,7 +54,19 @@ Para se preparar para os laboratórios, é crucial ter seu ambiente configurado 
 
 1. Depois que a tela mostrar a ID de Assinatura do Azure vinculada na parte superior, altere o número de **Trabalhos paralelos pagos** de **CI/CD hospedado pela MS** de 0 para **1**. Depois selecione o botão **SALVAR** na parte inferior.
 
-1. Talvez você **aguarde pelo menos 3 horas antes de usar os recursos de CI/CD** para que as novas configurações sejam refletidas no back-end. Caso contrário, você ainda verá a mensagem *"Nenhum paralelismo hospedado foi comprado ou concedido"*.
+   > **Observação**: talvez você **aguarde alguns minutos antes de usar os recursos de CI/CD** para que as novas configurações sejam refletidas no back-end. Caso contrário, você ainda verá a mensagem *"Nenhum paralelismo hospedado foi comprado ou concedido"*.
+
+1. Em **Configurações da Organização**, vá para a seção **Pipelines** e clique em **Configurações**.
+
+1. Alterne a opção para **Desativado** para **Desabilitar a criação de pipelines de compilação clássicos** e **Desabilitar a criação de pipelines de lançamento clássicos**.
+
+   > **Observação**: a opção **Desativar a criação de pipelines de lançamento clássicos** definida como **Ativado** oculta as opções de criação de pipelines de lançamento clássicos, como o menu **Lançamento** na seção **Pipeline** do DevOps Projects.
+
+1. Em **Configurações da Organização**, vá para a seção **Segurança** e clique em **Políticas**.
+
+1. Alterne a opção para **Ativado** para **Permitir projetos públicos**
+
+   > **Observação**: as extensões usadas em alguns laboratórios podem exigir um projeto público para permitir o uso da versão gratuita.
 
 ## Instruções para criar e configurar o projeto do Azure DevOps (você só precisa fazer isso uma vez)
 
@@ -96,48 +110,21 @@ Agora, você importará o eShopOnWeb para seu repositório do git.
    - O contêiner da pasta **.devcontainer** está configurado para o desenvolvimento usando contêineres (localmente no VS Code ou no GitHub Codespaces).
    - A pasta **.azure** contém modelos da infraestrutura como código do Bicep e do ARM.
    - A pasta **.github** contém definições de fluxo de trabalho YAML do GitHub.
-   - A pasta **src** contém o site do .NET 6 usado nos cenários do laboratório. 
+   - A pasta **src** contém o site do .NET 8 usado em cenários de laboratório.
 
 1. Deixe a janela do navegador da Web aberta.  
 
-### Criar uma entidade de serviço e uma conexão de serviço para acessar recursos do Azure
+1. Vá para **Repos > Branches**.
 
-Em seguida, você criará uma entidade de serviço usando a CLI do Azure e uma conexão de serviço no Azure DevOps que permitirá implantar e acessar recursos em sua assinatura do Azure.
+1. Passe o mouse sobre o branch **main** e clique nas reticências à direita da coluna.
 
-1. Inicie um navegador da Web, navegue até o Portal do Azure em `https://portal.azure.com` e entre com a conta de usuário que tem a função proprietário na assinatura do Azure que você usará nos laboratórios deste curso e tenha a função de Administrador Global no locatário do Microsoft Entra associado a essa assinatura.
+1. Clique em **Definir como branch padrão**.
 
-1. No portal do Azure, selecione o ícone **Cloud Shell** na parte superior da página à direita da caixa de pesquisa.
+### Criar uma entidade de serviço para acessar recursos do Azure
 
-1. Se for solicitado que você selecione **Bash** ou **PowerShell**, selecione **Bash**.
+A seguir, você precisará criar uma conexão de serviço no Azure DevOps, que permitirá implantar e acessar recursos em sua assinatura do Azure.
 
-   > [!NOTE]
-   > Se esta for a primeira vez que você estiver iniciando o **Cloud Shell** e receber a mensagem **Você não tem nenhum armazenamento montado**, selecione a assinatura que você está usando no laboratório e selecione **Criar armazenamento**.
-
-1. No prompt **Bash**, no painel **Cloud Shell**, execute os seguintes comandos para recuperar os valores da ID de assinatura do Azure e dos atributos de nome de assinatura:
-
-   ```bash
-   subscriptionName=$(az account show --query name --output tsv)
-   subscriptionId=$(az account show --query id --output tsv)
-   echo $subscriptionName
-   echo $subscriptionId
-   ```
-
-   > [!NOTE]
-   > Copie ambos os valores para um arquivo de texto. Você precisará delas nos laboratórios deste curso.
-
-1. No prompt **Bash**, no painel **Cloud Shell**, execute o seguinte comando para criar uma entidade de serviço:
-
-   ```bash
-   az ad sp create-for-rbac --name sp-eshoponweb-azdo --role contributor --scopes /subscriptions/$subscriptionId
-   ```
-
-   > [!NOTE]
-   > O comando gerará uma saída JSON. Copie a saída no arquivo de texto. Você precisará dele em breve.
-
-   > [!NOTE]
-   > Registre o valor, nome da entidade de segurança, sua ID e ID de locatário incluídas na saída JSON. Você precisará delas nos laboratórios deste curso.
-
-1. Volte para a janela do navegador da Web exibindo o portal do Azure DevOps com o projeto **eShopOnWeb** aberto e selecione **Configurações de Projeto** no canto inferior esquerdo do portal.
+1. Inicie o navegador da Web, navegue até o portal do Azure DevOps com o projeto **eShopOnWeb** aberto e selecione **Configurações de Projeto** no canto inferior esquerdo do portal.
 
 1. Em Pipelines, selecione **Conexões de serviço** e, em seguida, selecione o botão **Criar conexão de serviço**.
 
@@ -145,19 +132,19 @@ Em seguida, você criará uma entidade de serviço usando a CLI do Azure e uma c
 
 1. Na folha **Nova conexão de serviço**, escolha **Azure Resource Manager** e **Avançar** (talvez seja necessário rolar para baixo).
 
-1. Depois selecione **Entidade de serviço (manual)** e **Avançar**.
+1. Selecione **Federação de identidade de carga de trabalho (automática)** e **Avançar**.
 
-1. Preencha os campos vazios usando as informações coletadas durante as etapas anteriores:
+   > **Observação**: você também pode usar a **federação de identidade de carga de trabalho (manual)** se preferir configurar manualmente a conexão de serviço. Siga as etapas na [documentação do Azure DevOps](https://learn.microsoft.com/azure/devops/pipelines/library/connect-to-azure) para criar a conexão de serviço manualmente.
 
-   - ID e nome da assinatura.
-   - ID da entidade de serviço (ou clientId/AppId), chave da entidade de serviço (ou senha) e TenantId.
-   - Em **Nome da conexão de serviço**, digite **azure subs**. Esse nome será referenciado em pipelines YAML para fazer referência à conexão de serviço para acessar sua assinatura do Azure.
+1. Preencha os campos vazios usando as informações:
+    - **Assinatura**: Selecione sua assinatura do Azure.
+    - **Grupo de recursos**: selecione o grupo de recursos onde você quer implantar os recursos.
+    - **Nome da conexão de serviço**: Tipo **`azure subs`**. Esse nome será referenciado em pipelines YAML para acessar a sua assinatura do Azure.
 
-   ![Captura de tela da configuração da conexão de serviço do Azure.](media/azure-service-connection.png)
+1. Verifique se a opção **Conceder permissão de acesso a todos os pipelines** está desmarcada e clique em **Salvar**.
 
-1. Não marque **Conceder permissão de acesso a todos os pipelines**. Selecione **Verificar e salvar**.
+   > **Observação**: a opção **Conceder permissão de acesso a todos os pipelines** não é recomendada para ambientes de produção. Ela só é usada neste laboratório para simplificar a configuração do pipeline.
 
-   > [!NOTE]
-   > A opção **Conceder permissão de acesso a todos os pipelines** não é recomendada para ambientes de produção. Ela só é usada neste laboratório para simplificar a configuração do pipeline.
+   > **Observação**: se você vir uma mensagem de erro indicando que não tem as permissões necessárias para criar uma conexão de serviço, tente novamente ou configure a conexão de serviço manualmente.
 
 Agora você concluiu as etapas necessárias para continuar com os laboratórios.
